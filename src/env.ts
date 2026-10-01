@@ -1,9 +1,17 @@
+import type { OAuthHelpers } from "@cloudflare/workers-oauth-provider";
+
 export interface Env {
-  /** Optional. Omit to run in bring-your-own-key mode. */
+  /** Site Manager API key; remains on the Worker and is never sent to an MCP client. */
   UNIFI_API_KEY?: string;
-  /** Required whenever UNIFI_API_KEY is set. Comma separated list for rotation. */
+  /** Leftover from the legacy static-token deployment; not accepted by the OAuth endpoint. */
   MCP_TOKEN?: string;
-  /** Optional comma separated allowlist of console IDs. Secret, not a var. */
+  /** Independent, randomly generated (32+ characters) owner approval secret. */
+  OWNER_APPROVAL_SECRET?: string;
+  /** OAuth state, client registrations, grants and tokens. */
+  OAUTH_KV: KVNamespace;
+  /** Injected by the Cloudflare OAuth provider on the authorization route. */
+  OAUTH_PROVIDER: OAuthHelpers;
+  /** Optional comma separated allowlist of console IDs. */
   ALLOWED_CONSOLES?: string;
   ENABLE_WRITES?: string;
   MAX_BATCH?: string;
@@ -26,8 +34,7 @@ export function upstreamTimeoutMs(env: Env): number {
 
 /**
  * Returns null when no allowlist is configured, meaning every console the key can see.
- * An empty allowlist is treated as a configuration mistake rather than as "allow none",
- * because silently returning nothing is much harder to debug than an explicit error.
+ * An empty allowlist is treated as a configuration mistake rather than as "allow none".
  */
 export function allowedConsoles(env: Env): Set<string> | null {
   if (!env.ALLOWED_CONSOLES) return null;
