@@ -8,7 +8,7 @@ compatibility_flags = ["global_fetch_strictly_public"]
 # Never put credentials here: use dashboard Secrets only.
 [[kv_namespaces]]
 binding = "OAUTH_KV"
-id = "REPLACE_WITH_REAL_KV_NAMESPACE_ID"
+id = "777c3e59b8ab4cda86203e8f819849f2"
 
 [vars]
 # This OAuth deployment refuses all MCP access if ENABLE_WRITES is true.
