@@ -9,8 +9,8 @@ authorization-code + PKCE flow implemented by
 It is intended for a **single owner**, not for public multi-user access.
 
 > **DRAFT: Do not merge or deploy before the checklist below is complete.**
-> The KV namespace ID is intentionally a placeholder and the Worker will not be
-> ready until it is replaced. Cloudflare's existing main deployment stays unchanged.
+> The OAuth KV binding is configured. The deployed Worker must still be reviewed and
+> tested before merging. Cloudflare's existing main deployment stays unchanged.
 
 ## Security properties
 
@@ -37,9 +37,8 @@ It is intended for a **single owner**, not for public multi-user access.
    is not interchangeable with a Site Manager key.
 2. In Cloudflare Dashboard -> Workers & Pages -> KV, create a namespace
    called `home-unifi-oauth`. Copy its **namespace ID** (not a secret).
-3. On this branch, replace `REPLACE_WITH_REAL_KV_NAMESPACE_ID` in
-   `wrangler.toml` with that ID. The binding must be named `OAUTH_KV`.
-4. Under the Worker -> Settings -> Variables and Secrets, add as **Secret**:
+3. The namespace ID is already bound in `wrangler.toml` as `OAUTH_KV`.
+4. Confirm under Worker -> Settings -> Variables and Secrets that these are saved as **Secret**:
    - `UNIFI_API_KEY`: your Site Manager API key.
    - `OWNER_APPROVAL_SECRET`: a **new**, independent, random 64-character
      hexadecimal string. This is the credential to type on the consent page.
