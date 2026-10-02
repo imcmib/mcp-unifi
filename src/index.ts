@@ -121,8 +121,10 @@ async function authorize(request: Request, env: Env): Promise<Response> {
       return new Response(consentHtml(details, consent.handle), { headers: consent.headers });
     }
     if (request.method !== "POST") return new Response("Method not allowed", { status: 405, headers: noStore });
-    const origin = request.headers.get("origin");
-    if (origin && origin !== ORIGIN) return new Response("Invalid origin", { status: 403, headers: noStore });
+    // Do not reject solely on the browser's Origin header: external OAuth
+    // webviews can supply an opaque "null" origin when submitting the consent form.
+    // The official provider's approveConsent()/denyConsent() verify a high-entropy,
+    // single-use handle AND its matching browser-bound __Host- cookie instead.
     const form = await request.formData();
     const handle = form.get("handle");
     if (typeof handle !== "string" || !handle) return new Response("Invalid consent", { status: 400, headers: noStore });
