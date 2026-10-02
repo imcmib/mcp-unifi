@@ -1,4 +1,5 @@
 import { AuthorizationError, OAuthProvider } from "@cloudflare/workers-oauth-provider";
+import { CONSENT_CSP } from "./consent-csp";
 import type { Env } from "./env";
 import { matchesOwnerSecret } from "./owner";
 import { toolsFor } from "./tools";
@@ -116,8 +117,7 @@ async function authorize(request: Request, env: Env): Promise<Response> {
       consent.headers.set("cache-control", "no-store");
       consent.headers.set("referrer-policy", "no-referrer");
       consent.headers.set("x-frame-options", "DENY");
-      consent.headers.set("content-security-policy",
-        "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'");
+      consent.headers.set("content-security-policy", CONSENT_CSP);
       return new Response(consentHtml(details, consent.handle), { headers: consent.headers });
     }
     if (request.method !== "POST") return new Response("Method not allowed", { status: 405, headers: noStore });
